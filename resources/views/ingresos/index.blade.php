@@ -18,39 +18,44 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="row mb-4">
 
-            <div class="col-12 col-md-4 mb-3">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <small class="text-muted">Ingresos hoy</small>
-                        <h3 class="mb-0">{{ $totalIngresosHoy }}</h3>
-                    </div>
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">Ingresos hoy</small>
+                    <h3 class="mb-0">{{ $totalIngresosHoy }}</h3>
                 </div>
             </div>
-
-            <div class="col-12 col-md-4 mb-3">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <small class="text-muted">Cajas hoy</small>
-                        <h3 class="mb-0">{{ $totalCajasHoy }}</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4 mb-3">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <small class="text-muted">Kilos hoy</small>
-                        <h3 class="mb-0 text-danger">
-                            {{ number_format($totalKgHoy, 2) }} kg
-                        </h3>
-                    </div>
-                </div>
-            </div>
-
         </div>
+
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">Cajas hoy</small>
+                    <h3 class="mb-0">{{ $totalCajasHoy }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">Kilos hoy</small>
+                    <h3 class="mb-0 text-danger">
+                        {{ number_format($totalKgHoy, 2) }} kg
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     @forelse($ingresosPorDia as $fecha => $ingresos)
         @php
@@ -183,17 +188,17 @@
     @endforelse
 
     <script>
-function copiarResumen(event, texto) {
-    event.preventDefault();
-    event.stopPropagation();
+        function copiarResumen(event, texto) {
+            event.preventDefault();
+            event.stopPropagation();
 
-    navigator.clipboard.writeText(texto)
-        .then(() => {
-            alert('Resumen copiado para WhatsApp');
-        })
-        .catch(() => {
-            alert('No se pudo copiar el resumen');
-        });
-}
-</script>
+            navigator.clipboard.writeText(texto)
+                .then(() => {
+                    alert('Resumen copiado para WhatsApp');
+                })
+                .catch(() => {
+                    alert('No se pudo copiar el resumen');
+                });
+        }
+    </script>
 @endsection

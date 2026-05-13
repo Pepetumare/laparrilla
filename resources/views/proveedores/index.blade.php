@@ -69,21 +69,19 @@
 
                         <div class="d-flex gap-2 align-items-start">
 
-                            <a href="{{ route('proveedores.edit', ['proveedor' => $proveedor->id]) }}"
+                            <a href="{{ route('proveedores.edit', $proveedor) }}"
                                 class="btn btn-sm btn-outline-primary btn-accion">
                                 Editar
                             </a>
 
                             <form action="{{ route('proveedores.destroy', $proveedor) }}" method="POST"
                                 onsubmit="return confirm('¿Eliminar proveedor?')">
-
                                 @csrf
                                 @method('DELETE')
 
                                 <button type="submit" class="btn btn-sm btn-outline-danger btn-accion">
                                     Eliminar
                                 </button>
-
                             </form>
 
                         </div>

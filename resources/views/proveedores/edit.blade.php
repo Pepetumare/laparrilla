@@ -4,7 +4,7 @@
 
 <h2 class="mb-4">Editar proveedor</h2>
 
-<form action="{{ route('proveedores.update', ['proveedor' => $proveedor->id]) }}" method="POST">
+<form action="{{ route('proveedores.update', $proveedor) }}" method="POST">
 
     @csrf
     @method('PUT')
