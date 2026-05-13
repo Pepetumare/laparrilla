@@ -4,8 +4,8 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="mb-0">Productos</h2>
-        <small class="text-muted">Administración de productos</small>
+        <h2 class="mb-0 page-title">Productos</h2>
+        <small class="page-subtitle">Administración de productos</small>
     </div>
 
     <a href="{{ route('productos.create') }}" class="btn btn-danger">
