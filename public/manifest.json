@@ -1,0 +1,25 @@
+{
+    "name": "La Parrilla",
+    "short_name": "La Parrilla",
+    "description": "Sistema interno de control de mercadería de Carnicería La Parrilla",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#080403",
+    "theme_color": "#B62128",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/images/logo-la-parrilla.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-la-parrilla.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

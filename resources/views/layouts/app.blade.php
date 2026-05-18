@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --carbon: #080403;
@@ -39,7 +40,7 @@
             width: 42px;
             height: 42px;
             object-fit: contain;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 4px;
         }
@@ -167,86 +168,103 @@
             }
         }
     </style>
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#B62128">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="La Parrilla">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo-la-parrilla.png') }}">
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-parrilla shadow-sm py-3">
-    <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-parrilla shadow-sm py-3">
+        <div class="container-fluid">
 
-        <a href="{{ route('ingresos.index') }}" class="navbar-brand d-flex align-items-center gap-2">
-            <img src="{{ asset('images/logo-la-parrilla.png') }}" class="brand-logo" alt="La Parrilla">
-            <span class="brand-title">La Parrilla</span>
-        </a>
+            <a href="{{ route('ingresos.index') }}" class="navbar-brand d-flex align-items-center gap-2">
+                <img src="{{ asset('images/logo-la-parrilla.png') }}" class="brand-logo" alt="La Parrilla">
+                <span class="brand-title">La Parrilla</span>
+            </a>
 
-        @auth
-            <div class="d-flex gap-2 align-items-center flex-wrap navbar-actions">
+            @auth
+                <div class="d-flex gap-2 align-items-center flex-wrap navbar-actions">
 
-                <a href="{{ route('ingresos.index') }}" class="btn btn-sm btn-light">
-                    Ingresos
-                </a>
+                    <a href="{{ route('ingresos.index') }}" class="btn btn-sm btn-light">
+                        Ingresos
+                    </a>
 
-                <a href="{{ route('productos.index') }}" class="btn btn-sm btn-light">
-                    Productos
-                </a>
+                    <a href="{{ route('productos.index') }}" class="btn btn-sm btn-light">
+                        Productos
+                    </a>
 
-                <a href="{{ route('proveedores.index') }}" class="btn btn-sm btn-light">
-                    Proveedores
-                </a>
+                    <a href="{{ route('proveedores.index') }}" class="btn btn-sm btn-light">
+                        Proveedores
+                    </a>
+                    <a href="{{ route('procesamientos.index') }}" class="btn btn-sm btn-light">
+                        Procesamientos
+                    </a>
 
-                @if(Auth::user()->rol === 'admin')
-                    @php
-                        $sucursalesNavbar = \App\Models\Sucursal::where('activo', true)->get();
-                    @endphp
+                    @if (Auth::user()->rol === 'admin')
+                        @php
+                            $sucursalesNavbar = \App\Models\Sucursal::where('activo', true)->get();
+                        @endphp
 
-                    <form method="POST" action="{{ route('sucursal.cambiar') }}" class="m-0">
-                        @csrf
+                        <form method="POST" action="{{ route('sucursal.cambiar') }}" class="m-0">
+                            @csrf
 
-                        <select
-                            name="sucursal_id"
-                            class="form-select form-select-sm"
-                            onchange="this.form.submit()"
-                        >
-                            <option value="">Todas las sucursales</option>
+                            <select name="sucursal_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="">Todas las sucursales</option>
 
-                            @foreach($sucursalesNavbar as $sucursal)
-                                <option
-                                    value="{{ $sucursal->id }}"
-                                    {{ session('sucursal_activa_id') == $sucursal->id ? 'selected' : '' }}
-                                >
-                                    {{ $sucursal->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
-                @endif
-
-                <span class="text-white small ms-2">
-                    {{ Auth::user()->name }}
-
-                    @if(Auth::user()->rol === 'admin')
-                        <span class="badge bg-dark">Admin</span>
-                    @else
-                        <span class="badge bg-secondary">Trabajador</span>
+                                @foreach ($sucursalesNavbar as $sucursal)
+                                    <option value="{{ $sucursal->id }}"
+                                        {{ session('sucursal_activa_id') == $sucursal->id ? 'selected' : '' }}>
+                                        {{ $sucursal->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
                     @endif
-                </span>
 
-                <form method="POST" action="{{ route('logout') }}" class="m-0">
-                    @csrf
-                    <button class="btn btn-sm btn-dark">
-                        Salir
-                    </button>
-                </form>
+                    <span class="text-white small ms-2">
+                        {{ Auth::user()->name }}
 
-            </div>
-        @endauth
+                        @if (Auth::user()->rol === 'admin')
+                            <span class="badge bg-dark">Admin</span>
+                        @else
+                            <span class="badge bg-secondary">Trabajador</span>
+                        @endif
+                    </span>
 
-    </div>
-</nav>
+                    <form method="POST" action="{{ route('logout') }}" class="m-0">
+                        @csrf
+                        <button class="btn btn-sm btn-dark">
+                            Salir
+                        </button>
+                    </form>
 
-<main class="container main-shell py-5">
-    @yield('content')
-</main>
+                </div>
+            @endauth
 
+        </div>
+    </nav>
+
+    <main class="container main-shell py-5">
+        @yield('content')
+    </main>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function() {
+                        console.log('Service Worker registrado correctamente');
+                    })
+                    .catch(function(error) {
+                        console.log('Error registrando Service Worker:', error);
+                    });
+            });
+        }
+    </script>
 </body>
+
 </html>

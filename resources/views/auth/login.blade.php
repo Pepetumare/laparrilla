@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - La Parrilla</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --carbon: #080403;
@@ -137,7 +138,30 @@
                 font-size: 30px;
             }
         }
+
+        .btn-install-app {
+            margin-top: 14px;
+            width: 100%;
+            border: 1px solid var(--rojo-parrilla);
+            background: transparent;
+            color: var(--rojo-parrilla);
+            border-radius: 14px;
+            padding: 11px;
+            font-weight: 800;
+        }
+
+        .btn-install-app:hover {
+            background: var(--rojo-parrilla);
+            color: var(--blanco-humo);
+        }
     </style>
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#B62128">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="La Parrilla">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo-la-parrilla.png') }}">
 </head>
 
 <body>
@@ -146,11 +170,7 @@
 
         <div class="login-card">
 
-            <img
-                src="{{ asset('images/logo-la-parrilla.png') }}"
-                alt="Carnicería La Parrilla"
-                class="login-logo"
-            >
+            <img src="{{ asset('images/logo-la-parrilla.png') }}" alt="Carnicería La Parrilla" class="login-logo">
 
             <h1 class="login-title">
                 La Parrilla
@@ -174,15 +194,8 @@
                         Correo electrónico
                     </label>
 
-                    <input
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        class="form-control"
-                        required
-                        autofocus
-                        autocomplete="username"
-                    >
+                    <input type="email" name="email" value="{{ old('email') }}" class="form-control" required
+                        autofocus autocomplete="username">
 
                     @error('email')
                         <div class="error-text">
@@ -196,13 +209,8 @@
                         Contraseña
                     </label>
 
-                    <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        required
-                        autocomplete="current-password"
-                    >
+                    <input type="password" name="password" class="form-control" required
+                        autocomplete="current-password">
 
                     @error('password')
                         <div class="error-text">
@@ -212,12 +220,7 @@
                 </div>
 
                 <div class="form-check mb-4">
-                    <input
-                        id="remember_me"
-                        type="checkbox"
-                        class="form-check-input"
-                        name="remember"
-                    >
+                    <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
 
                     <label for="remember_me" class="form-check-label">
                         Recordarme
@@ -228,7 +231,9 @@
                     Iniciar sesión
                 </button>
             </form>
-
+            <button id="installAppBtn" class="btn-install-app d-none" type="button">
+                Instalar aplicación en este teléfono
+            </button>
             <div class="login-footer">
                 Carnicería La Parrilla · Sistema privado
             </div>
@@ -236,6 +241,44 @@
         </div>
 
     </main>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function() {
+                        console.log('Service Worker registrado correctamente');
+                    })
+                    .catch(function(error) {
+                        console.log('Error registrando Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+    <script>
+        let deferredPrompt;
 
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+
+            deferredPrompt = e;
+
+            const installBtn = document.getElementById('installAppBtn');
+
+            if (installBtn) {
+                installBtn.classList.remove('d-none');
+
+                installBtn.addEventListener('click', async function() {
+                    installBtn.classList.add('d-none');
+
+                    deferredPrompt.prompt();
+
+                    const choiceResult = await deferredPrompt.userChoice;
+
+                    deferredPrompt = null;
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>

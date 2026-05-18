@@ -30,4 +30,9 @@ class IngresoMercaderia extends Model
     {
         return $this->belongsTo(Sucursal::class);
     }
+
+    public function procesamientos()
+    {
+        return $this->hasMany(Procesamiento::class);
+    }
 }
