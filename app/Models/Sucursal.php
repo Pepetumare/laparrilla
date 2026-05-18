@@ -23,4 +23,9 @@ class Sucursal extends Model
     {
         return $this->hasMany(IngresoMercaderia::class);
     }
+
+    public function cierresDiarios()
+    {
+        return $this->hasMany(CierreDiario::class);
+    }
 }

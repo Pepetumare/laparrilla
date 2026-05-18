@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\IngresoMercaderiaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
@@ -7,6 +8,8 @@ use App\Http\Controllers\ProveedorController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ProcesamientoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\CierreDiarioController;
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -46,6 +49,23 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/procesamientos', [ProcesamientoController::class, 'store'])
         ->name('procesamientos.store');
+    Route::get('/stock', [StockController::class, 'index'])
+        ->name('stock.index');
+
+    Route::get('/cierres', [CierreDiarioController::class, 'index'])
+        ->name('cierres.index');
+
+    Route::get('/cierres/create', [CierreDiarioController::class, 'create'])
+        ->name('cierres.create');
+
+    Route::post('/cierres', [CierreDiarioController::class, 'store'])
+        ->name('cierres.store');
+
+    Route::get('/reportes', [ReporteController::class, 'index'])
+        ->name('reportes.index');
+
+    Route::get('/reportes/exportar-csv', [ReporteController::class, 'exportarCsv'])
+        ->name('reportes.exportarCsv');
 });
 
 require __DIR__ . '/auth.php';

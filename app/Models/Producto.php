@@ -22,4 +22,9 @@ class Producto extends Model
     {
         return $this->belongsToMany(Proveedor::class, 'producto_proveedor');
     }
+
+    public function detallesCierres()
+    {
+        return $this->hasMany(DetalleCierreDiario::class);
+    }
 }

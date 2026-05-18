@@ -204,6 +204,15 @@
                     <a href="{{ route('procesamientos.index') }}" class="btn btn-sm btn-light">
                         Procesamientos
                     </a>
+                    <a href="{{ route('stock.index') }}" class="btn btn-sm btn-light">
+                        Stock
+                    </a>
+                    <a href="{{ route('cierres.index') }}" class="btn btn-sm btn-light">
+                        Cierres
+                    </a>
+                    <a href="{{ route('reportes.index') }}" class="btn btn-sm btn-light">
+                        Reportes
+                    </a>
 
                     @if (Auth::user()->rol === 'admin')
                         @php
