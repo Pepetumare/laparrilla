@@ -8,6 +8,7 @@ use App\Models\CierreDiario;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteController extends Controller
 {
@@ -329,5 +330,107 @@ class ReporteController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportarPdf(Request $request)
+    {
+        $user = auth()->user();
+
+        $fechaDesde = $request->fecha_desde ?? now()->startOfMonth()->format('Y-m-d');
+        $fechaHasta = $request->fecha_hasta ?? now()->format('Y-m-d');
+
+        $productoId = $request->producto_id;
+        $sucursalFiltro = $request->sucursal_id;
+
+        if ($user->rol !== 'admin') {
+            $sucursalId = $user->sucursal_id;
+        } else {
+            $sucursalId = $request->filled('sucursal_id')
+                ? $sucursalFiltro
+                : null;
+        }
+
+        $queryProcesamientos = \App\Models\Procesamiento::with([
+            'producto',
+            'sucursal'
+        ])->whereBetween('fecha_procesamiento', [$fechaDesde, $fechaHasta]);
+
+        if ($sucursalId) {
+            $queryProcesamientos->where('sucursal_id', $sucursalId);
+        }
+
+        if ($productoId) {
+            $queryProcesamientos->where('producto_id', $productoId);
+        }
+
+        $procesamientos = $queryProcesamientos->get();
+
+        $queryCierres = \App\Models\CierreDiario::with([
+            'detalles.producto',
+            'sucursal'
+        ])->whereBetween('fecha_cierre', [$fechaDesde, $fechaHasta]);
+
+        if ($sucursalId) {
+            $queryCierres->where('sucursal_id', $sucursalId);
+        }
+
+        if ($productoId) {
+            $queryCierres->whereHas('detalles', function ($query) use ($productoId) {
+                $query->where('producto_id', $productoId);
+            });
+        }
+
+        $cierres = $queryCierres->get();
+
+        $productosReporte = [];
+
+        foreach ($procesamientos->groupBy('producto_id') as $idProducto => $items) {
+            $producto = $items->first()->producto;
+            $sucursal = $items->first()->sucursal;
+
+            $vendidoProducto = $cierres->sum(function ($cierre) use ($idProducto) {
+                return $cierre->detalles
+                    ->where('producto_id', $idProducto)
+                    ->sum('kilos_vendidos_kg');
+            });
+
+            $procesado = $items->sum('peso_inicial_kg');
+            $util = $items->sum('peso_util_kg');
+            $merma = $items->sum('merma_kg');
+            $stockActual = $util - $vendidoProducto;
+
+            $productosReporte[] = [
+                'sucursal' => $sucursal->nombre ?? 'Sin sucursal',
+                'producto' => $producto->nombre ?? 'Producto',
+                'categoria' => $producto->categoria ?? '',
+                'procesado' => $procesado,
+                'util' => $util,
+                'merma' => $merma,
+                'porcentaje_merma' => $procesado > 0 ? ($merma / $procesado) * 100 : 0,
+                'vendido' => $vendidoProducto,
+                'stock_actual' => max($stockActual, 0),
+            ];
+        }
+
+        $totalProcesado = collect($productosReporte)->sum('procesado');
+        $totalUtil = collect($productosReporte)->sum('util');
+        $totalMerma = collect($productosReporte)->sum('merma');
+        $totalVendido = collect($productosReporte)->sum('vendido');
+        $totalStock = collect($productosReporte)->sum('stock_actual');
+
+        $pdf = Pdf::loadView('reportes.pdf', compact(
+            'fechaDesde',
+            'fechaHasta',
+            'productosReporte',
+            'totalProcesado',
+            'totalUtil',
+            'totalMerma',
+            'totalVendido',
+            'totalStock'
+        ))->setPaper('letter', 'portrait');
+
+        $nombreArchivo = 'reporte_la_parrilla_' . $fechaDesde . '_al_' . $fechaHasta . '.pdf';
+
+        return $pdf->download($nombreArchivo);
     }
 }

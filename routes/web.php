@@ -66,6 +66,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reportes/exportar-csv', [ReporteController::class, 'exportarCsv'])
         ->name('reportes.exportarCsv');
+
+    Route::get('/reportes/exportar-pdf', [ReporteController::class, 'exportarPdf'])
+    ->name('reportes.exportarPdf');
+    
 });
 
 require __DIR__ . '/auth.php';

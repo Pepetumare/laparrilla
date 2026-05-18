@@ -104,6 +104,10 @@
                         Exportar CSV
                     </a>
 
+                    <a href="{{ route('reportes.exportarPdf', request()->query()) }}" class="btn btn-dark">
+                        Exportar PDF
+                    </a>
+
                     <button type="button" class="btn btn-dark"
                         onclick='copiarResumenWhatsapp(@json($resumenWhatsapp))'>
                         Copiar WhatsApp
